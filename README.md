@@ -1,6 +1,6 @@
 # units
 
-> Converts a real number from one unit to another
+> Zsh script to convert a real number from one unit to another
 
 ## Installation / uninstallation
 
