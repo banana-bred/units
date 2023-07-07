@@ -19,16 +19,18 @@ local hbar=1.054571817e-34 # -- hbar (J*s)
 local c=299792458          # -- speed of ligh in vacuum (m/s)
 
 # -- energy
-local au_eV=27.211386245988
-local au_J=4.3597447222071e-18
-local au_K=$(($au_J / $kboltz))
-local au_Ryd=2.0
-local au_invcm=$((8065.54445 * au_eV))
-local au_Hz=6584238941130000
-# local au_Hz=$(( $au_invcm * 3e10 ))
+local au2eV=27.211386245988              # -- atomic units --> electron volts (eV)
+local au2J=4.3597447222071e-18           # -- atomic units --> Joules (J)
+local au2K=$(($au2J / $kboltz))          # -- atomic units --> Kelvin (K)
+local au2Ryd=2.0                         # -- atomic units --> Rydbgerg
+local au2invcm=$((8065.54445 * au2eV))   # -- atomic units --> wavenumbers (inverse centimeters)
+local au2Hz=6584238941130000             # -- atomic units --> Hertz (Hz)
 
 # -- distance
-local au_ang=0.52918
+local au2ang=0.52918 # -- atomic units --> Ångström
+local in2m=0.0254    # -- inches       --> meters
+local mi2m=1609.344  # -- miles        --> meters
+local ft2m=0.3048    # -- feet         --> meters
 
 # -- mass
 local lb_kg=0.4535924
@@ -83,6 +85,10 @@ $PROGRAM
             m        :: meters
             km       :: kilometers  (1e+3  m)
 
+            ft       :: feet
+            mi       :: miles
+            in       :: inches
+
         Note: Distance and energy can be related to each other through the relation
 
             c = λ*ν,
@@ -126,20 +132,23 @@ length_from() {    # <-- length units
   local FROM="$2"
 
 	case $FROM in
-		ym)       val=$(($val * 1e-24))                            ;;
-		zm)       val=$(($val * 1e-21))                            ;;
-		am)       val=$(($val * 1e-18))                            ;;
-		fm)       val=$(($val * 1e-15))                            ;;
-		pm)       val=$(($val * 1e-12))                            ;;
-		ang*)     val=$(($val * 1e-10))                            ;;
-		nm)       val=$(($val * 1e-9))                             ;;
-		μm)       val=$(($val * 1e-6))                             ;;
-		mm)       val=$(($val * 1e-3))                             ;;
-		cm)       val=$(($val * 1e-2))                             ;;
-		dm)       val=$(($val * 1e-1))                             ;;
-		m)                                                         ;;
-		km)       val=$(($val * 1e3))                              ;;
-		bohr)     val=$(($val * $au_ang * 1e-10))                  ;;
+		ym)       val=$(($val * 1e-24))           ;;
+		zm)       val=$(($val * 1e-21))           ;;
+		am)       val=$(($val * 1e-18))           ;;
+		fm)       val=$(($val * 1e-15))           ;;
+		pm)       val=$(($val * 1e-12))           ;;
+		ang*)     val=$(($val * 1e-10))           ;;
+		nm)       val=$(($val * 1e-9))            ;;
+		μm)       val=$(($val * 1e-6))            ;;
+		mm)       val=$(($val * 1e-3))            ;;
+		cm)       val=$(($val * 1e-2))            ;;
+		dm)       val=$(($val * 1e-1))            ;;
+		in*)      val=$(($val * ${in2m}))         ;;
+		mi*)      val=$(($val * ${mi2m}))         ;;
+		f*t)      val=$(($val * ${ft2m}))         ;;
+		m)                                        ;;
+		km)       val=$(($val * 1e3))             ;;
+		bohr)     val=$(($val * $au2ang * 1e-10)) ;;
 	esac
 
   echo "${val}" # --> meters
@@ -162,9 +171,12 @@ length_to() {
 		mm)   val=$(($val * 1e3))            ;;
 		cm)   val=$(($val * 1e2))            ;;
 		dm)   val=$(($val * 1e1))            ;;
+		in*)  val=$(($val / ${in2m}))        ;;
+		mi*)  val=$(($val / ${mi2m}))        ;;
+		f*t)  val=$(($val / ${ft2m}))        ;;
 		m)                                   ;;
-		km)   val=$(($val * 1e-3))            ;;
-		bohr) val=$(($val / $au_ang * 1e10)) ;;
+		km)   val=$(($val * 1e-3))           ;;
+		bohr) val=$(($val / $au2ang * 1e10)) ;;
 	esac
 
 	echo "${val}"  # --> length units
@@ -176,17 +188,17 @@ energy_from() {    # <-- energy units
 	local FROM="$2"
 
 	case $FROM in
-		ev)       val=$(($val / $au_eV))                 ;;
+		ev)       val=$(($val / $au2eV))                 ;;
 		hartree*)                                        ;;
-		ryd*)     val=$(($val / $au_Ryd))                ;;
-		j*)       val=$(($val / $au_J))                  ;;
-		c|cel*)   val=$((($val + 273.15)/ $au_K))        ;;
-		k|kel*)   val=$(($val / $au_K))                  ;;
-		f|fahr*)  val=$((($(F2C $val) + 273.15)/ $au_K)) ;;
-		invcm*)   val=$(($val / $au_invcm))              ;;
-		hz)       val=$(($val / $au_Hz))                 ;;
-		mhz)      val=$(($val * $mega / $au_Hz))         ;;
-		ghz)      val=$(($val * $giga / $au_Hz))         ;;
+		ryd*)     val=$(($val / $au2Ryd))                ;;
+		j*)       val=$(($val / $au2J))                  ;;
+		c|cel*)   val=$((($val + 273.15)/ $au2K))        ;;
+		k|kel*)   val=$(($val / $au2K))                  ;;
+		f|fahr*)  val=$((($(F2C $val) + 273.15)/ $au2K)) ;;
+		invcm*)   val=$(($val / $au2invcm))              ;;
+		hz)       val=$(($val / $au2Hz))                 ;;
+		mhz)      val=$(($val * $mega / $au2Hz))         ;;
+		ghz)      val=$(($val * $giga / $au2Hz))         ;;
 		*) usage &&  die "I don't know how to convert $FROM to something else" ;;
 	esac
 
@@ -194,22 +206,22 @@ energy_from() {    # <-- energy units
 
 }
 
-energy_to() {     # <-- atomic units
+energy_to() {     # <-- atomic units (au)
   local val="$1"
   local TO="$2"
 
 	case $TO in
-		ev)       val=$(($val * $au_eV))                ;;
+		ev)       val=$(($val * $au2eV))                ;;
 	  hartree*)                                       ;;
-		ryd*)     val=$(($val * $au_Ryd))               ;;
-		j*)       val=$(($val * $au_J))                 ;;
-		c|cel)    val=$(($val * $au_K - 273.15))        ;;
-		k|kel*)   val=$(($val * $au_K))                 ;;
-		f|fahr*)  val=$(C2F $(($val * $au_K - 273.15))) ;;
-		invcm*)   val=$(($val * $au_invcm))             ;;
-		hz)       val=$(($val * $au_Hz))                ;;
-		mhz)      val=$(($val / $mega * $au_Hz))        ;;
-		ghz)      val=$(($val / $giga * $au_Hz))        ;;
+		ryd*)     val=$(($val * $au2Ryd))               ;;
+		j*)       val=$(($val * $au2J))                 ;;
+		c|cel)    val=$(($val * $au2K - 273.15))        ;;
+		k|kel*)   val=$(($val * $au2K))                 ;;
+		f|fahr*)  val=$(C2F $(($val * $au2K - 273.15))) ;;
+		invcm*)   val=$(($val * $au2invcm))             ;;
+		hz)       val=$(($val * $au2Hz))                ;;
+		mhz)      val=$(($val / $mega * $au2Hz))        ;;
+		ghz)      val=$(($val / $giga * $au2Hz))        ;;
 		*) usage &&  die "I don't know how to convert to '$TO'" ;;
 	esac
 
@@ -260,7 +272,7 @@ main() {
 	local intype
 	local outtype
 
-  # -- Parses command-line arguments in order to perform the stuff.
+  # -- Parses command-line arguments in order to do the stuff.
 
 	while :; do
 		case $1 in
@@ -296,7 +308,7 @@ main() {
 		ev|hartree*|ryd*|j*|f|fahr*|c|cel*|k|kel*|invcm*|?hz|hz)
 			intype="energy"
 			;;
-		ym|zm|am|fm|pm|ang*|bohr|nm|μm|mm|cm|dm|m|km)
+		ym|zm|am|fm|pm|nm|μm|mm|cm|dm|m|km| ang*|bohr| ft|feet|foot|in|inch*|mi|mile*)
 			intype="length"
 			;;
 		*)
@@ -311,7 +323,7 @@ main() {
 		ev|hartree*|ryd*|j*|f|fahr*|c|cel*|k|kel*|invcm*|?hz|hz)
 			outtype="energy"
 			;;
-		ym|zm|am|fm|pm|ang*|bohr|nm|μm|mm|cm|dm|m|km)
+		ym|zm|am|fm|pm|nm|μm|mm|cm|dm|m|km| ang*|bohr| ft|feet|foot|in|inch*|mi|mile*)
 			outtype="length"
 			;;
 		*)
@@ -323,12 +335,12 @@ main() {
     case "${intype}" in
       length)
         [[ "${outtype}" = "energy" ]] || die "Failed trying to convert ${intype} to ${outtype}."
-        val=$(( ($c / $("${intype}"_from "${NUM}" "${FROM:l}")) / $au_Hz ))
+        val=$(( ($c / $("${intype}"_from "${NUM}" "${FROM:l}")) / $au2Hz ))
         "${outtype}"_to "${val}" "${TO:l}"
         ;;
       energy)
         [[ "${outtype}" = "length" ]] || die "Failed trying to convert ${intype} to ${outtype}."
-        val=$(( $c / ($("${intype}"_from "${NUM}" "${FROM:l}") * $au_Hz)  ))
+        val=$(( $c / ($("${intype}"_from "${NUM}" "${FROM:l}") * $au2Hz)  ))
         "${outtype}"_to "${val}" "${TO:l}"
         ;;
       *) die "Failed trying to convert ${intype} to ${outtype}." ;;
