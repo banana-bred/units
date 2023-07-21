@@ -6,8 +6,7 @@
 
 The following additional variables are supported:
 - `DESTDIR` -- determines environment for staged installs,
-- `PREFIX`  -- determines the value of `BINDIR`              (default: `$${HOME}/.local`).
-- `BINDIR`  -- determines where the script will be installed (default: `$(PREFIX)/bin`).
+- `BINDIR`  -- determines where the script will be installed (default: `/usr/local/bin`).
 
 To **install**, just run `make` with superuser privileges.\
 To **uninstall**, just run `make uninstall` with the same privileges.
