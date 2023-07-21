@@ -1,6 +1,5 @@
 NAME   := units
-PREFIX ?= $${HOME}/.local
-BINDIR ?= $(PREFIX)/bin
+BINDIR ?= /usr/local/bin
 
 install:
 	install -D -m755 $(NAME) "$(DESTDIR)$(BINDIR)/$(NAME)"
@@ -10,6 +9,5 @@ uninstall:
 
 debug:
 	@echo "NAME    = $(NAME)"
-	@echo "PREFIX  = $(PREFIX)"
 	@echo "BINDIR  = $(BINDIR)"
 	@echo "DESTDIR = $(DESTDIR)"

@@ -9,8 +9,8 @@ The following additional variables are supported:
 - `PREFIX`  -- determines the value of `BINDIR`              (default: `$${HOME}/.local`).
 - `BINDIR`  -- determines where the script will be installed (default: `$(PREFIX)/bin`).
 
-To **install**, just run `make`.\
-To **uninstall**, just run `make uninstall`.
+To **install**, just run `make` with superuser privileges.\
+To **uninstall**, just run `make uninstall` with the same privileges.
 
 To change the value of any `make` variables, run, e.g., `make FOO=bar install`
 
@@ -18,7 +18,9 @@ To change the value of any `make` variables, run, e.g., `make FOO=bar install`
 
 The script requires the following to run:
 - `zsh`
-- `linux (maybe macOS)`
+
+The provided Makefile assumes a linux operating system.
+
 
 ## Usage
 
