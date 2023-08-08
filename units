@@ -271,6 +271,7 @@ main() {
   local val
 	local intype
 	local outtype
+  local result
 
   # -- Parses command-line arguments in order to do the stuff.
 
@@ -297,9 +298,12 @@ main() {
 
 	done
 
-	NUM="${@: -3:1}"
-	FROM="${@: -2:1}"
-	TO="${@: -1:1}"
+	NUM="$1"
+	FROM="$2"
+	TO="$3"
+	EXPONENT="$4"
+
+  [[ -z "${EXPONENT}" ]] && EXPONENT=1 || ( [[ "${EXPONENT}" -lt 1 ]] && die "Exponent (${EXPONENT}) must be greater or equal to 1" )
 
 	case "${FROM:l}" in
 		lb*|kg)
@@ -336,18 +340,20 @@ main() {
       length)
         [[ "${outtype}" = "energy" ]] || die "Failed trying to convert ${intype} to ${outtype}."
         val=$(( ($c / $("${intype}"_from "${NUM}" "${FROM:l}")) / $au2Hz ))
-        "${outtype}"_to "${val}" "${TO:l}"
+        result=$("${outtype}"_to "${val}" "${TO:l}")
         ;;
       energy)
         [[ "${outtype}" = "length" ]] || die "Failed trying to convert ${intype} to ${outtype}."
         val=$(( $c / ($("${intype}"_from "${NUM}" "${FROM:l}") * $au2Hz)  ))
-        "${outtype}"_to "${val}" "${TO:l}"
+        result=$("${outtype}"_to "${val}" "${TO:l}")
         ;;
       *) die "Failed trying to convert ${intype} to ${outtype}." ;;
     esac
   else
-    "${outtype}"_to $("${intype}"_from "${NUM}" "${FROM:l}") "${TO:l}"
+    result=$("${outtype}_to" $("${intype}_from" "${NUM}" "${FROM:l}") "${TO:l}")
   fi
+
+  echo "$(( ${result}**${EXPONENT} ))"
 
 }
 
