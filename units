@@ -13,21 +13,26 @@ local kilo=1e3
 local mega=1e6
 local giga=1e9
 
+# -- physical constants and energy conversions taken from 2018 CODATA recommended values
+#    available at https://physics.nist.gov/cuu/Constants/index.html
+
 # -- physical constants constants
-local kboltz=1.38649e-23   # -- Boltzmann constant (J/K)
+local kboltz=1.380649e-23   # -- Boltzmann constant (J/K)
 local hbar=1.054571817e-34 # -- hbar (J*s)
 local c=299792458          # -- speed of ligh in vacuum (m/s)
 
 # -- energy
-local au2eV=27.211386245988              # -- atomic units --> electron volts (eV)
-local au2J=4.3597447222071e-18           # -- atomic units --> Joules (J)
-local au2K=$(($au2J / $kboltz))          # -- atomic units --> Kelvin (K)
-local au2Ryd=2.0                         # -- atomic units --> Rydbgerg
-local au2invcm=$((8065.54445 * au2eV))   # -- atomic units --> wavenumbers (inverse centimeters)
-local au2Hz=6584238941130000             # -- atomic units --> Hertz (Hz)
+local au2eV=27.211386245988                # -- atomic units --> electron volts (eV)
+local au2J=4.3597447222071e-18             # -- atomic units --> Joules (J)
+local au2K=$(($au2J / $kboltz))            # -- atomic units --> Kelvin (K)
+local au2Ryd=2.0                           # -- atomic units --> Rydbgerg
+# local au2invcm=$((8065.54445 * au2eV))     # -- atomic units --> wavenumbers (inverse centimeters)
+local au2invcm=$((1 / 4.5563552529120e-6)) # -- atomic units --> wavenumbers (inverse centimeters)
+local au2Hz=$(( 1 / 1.5198298460570e-16  ))               # -- atomic units --> Hertz (Hz)
+local C2K=273.15
 
 # -- distance
-local au2ang=0.52918 # -- atomic units --> Ångström
+local au2ang=0.529177210903 # -- atomic units --> Ångström
 local in2m=0.0254    # -- inches       --> meters
 local mi2m=1609.344  # -- miles        --> meters
 local ft2m=0.3048    # -- feet         --> meters
@@ -192,9 +197,9 @@ energy_from() {    # <-- energy units
 		hartree*)                                        ;;
 		ryd*)     val=$(($val / $au2Ryd))                ;;
 		j*)       val=$(($val / $au2J))                  ;;
-		c|cel*)   val=$((($val + 273.15)/ $au2K))        ;;
+		c|cel*)   val=$((($val + $C2K)/ $au2K))          ;;
 		k|kel*)   val=$(($val / $au2K))                  ;;
-		f|fahr*)  val=$((($(F2C $val) + 273.15)/ $au2K)) ;;
+		f|fahr*)  val=$((($(F2C $val) + $C2K)/ $au2K))   ;;
 		invcm*)   val=$(($val / $au2invcm))              ;;
 		hz)       val=$(($val / $au2Hz))                 ;;
 		mhz)      val=$(($val * $mega / $au2Hz))         ;;
@@ -215,9 +220,9 @@ energy_to() {     # <-- atomic units (au)
 	  hartree*)                                       ;;
 		ryd*)     val=$(($val * $au2Ryd))               ;;
 		j*)       val=$(($val * $au2J))                 ;;
-		c|cel)    val=$(($val * $au2K - 273.15))        ;;
+		c|cel)    val=$(($val * $au2K - $C2K))          ;;
 		k|kel*)   val=$(($val * $au2K))                 ;;
-		f|fahr*)  val=$(C2F $(($val * $au2K - 273.15))) ;;
+		f|fahr*)  val=$(C2F $(($val * $au2K - $C2K)))   ;;
 		invcm*)   val=$(($val * $au2invcm))             ;;
 		hz)       val=$(($val * $au2Hz))                ;;
 		mhz)      val=$(($val / $mega * $au2Hz))        ;;
