@@ -17,99 +17,98 @@ local giga=1e9
 #    available at https://physics.nist.gov/cuu/Constants/index.html
 
 # -- physical constants constants
-local kboltz=1.380649e-23   # -- Boltzmann constant (J/K)
+local kboltz=1.380649e-23  # -- Boltzmann constant (J/K)
 local hbar=1.054571817e-34 # -- hbar (J*s)
 local c=299792458          # -- speed of ligh in vacuum (m/s)
 
 # -- energy
-local au2eV=27.211386245988                # -- atomic units --> electron volts (eV)
-local au2J=4.3597447222071e-18             # -- atomic units --> Joules (J)
-local au2K=$(($au2J / $kboltz))            # -- atomic units --> Kelvin (K)
-local au2Ryd=2.0                           # -- atomic units --> Rydbgerg
-# local au2invcm=$((8065.54445 * au2eV))     # -- atomic units --> wavenumbers (inverse centimeters)
-local au2invcm=$((1 / 4.5563552529120e-6)) # -- atomic units --> wavenumbers (inverse centimeters)
-local au2Hz=$(( 1 / 1.5198298460570e-16  ))               # -- atomic units --> Hertz (Hz)
+local au2eV=27.211386245988                 # -- atomic units --> electron volts (eV)
+local au2J=4.3597447222071e-18              # -- atomic units --> Joules (J)
+local au2K=$(($au2J / $kboltz))             # -- atomic units --> Kelvin (K)
+local au2Ryd=2.0                            # -- atomic units --> Rydbgerg
+local au2invcm=$((1 / 4.5563552529120e-6))  # -- atomic units --> wavenumbers (inverse centimeters)
+local au2Hz=$(( 1 / 1.5198298460570e-16  )) # -- atomic units --> Hertz (Hz)
 local C2K=273.15
 
 # -- distance
 local au2ang=0.529177210903 # -- atomic units --> Ångström
-local in2m=0.0254    # -- inches       --> meters
-local mi2m=1609.344  # -- miles        --> meters
-local ft2m=0.3048    # -- feet         --> meters
+local in2m=0.0254    # -- inches --> meters
+local mi2m=1609.344  # -- miles  --> meters
+local ft2m=0.3048    # -- feet   --> meters
 
 # -- mass
 local lb_kg=0.4535924
 
 usage() {
-    # Prints general usage of the script.
+ ## Prints general usage of the script.
 
-    cat <<help
+ cat <<help
 
 $PROGRAM
 
-    Converts a real number from one unit to another
+  Converts a real number from one unit to another
 
-    usage: ${PROGRAM}  [operation] NUM FROM TO
-        NUM:  a number
-        FROM: units of NUM
-        TO:   units to which we want to convert NUM
+  usage: ${PROGRAM}  [operation] NUM FROM TO
+      NUM:  a number
+      FROM: units of NUM
+      TO:   units to which we want to convert NUM
 
-    operations:
-        -h               Show this message.
+  operations:
+      -h               Show this message.
 
-    Valid conversion units:
+  Valid conversion units:
 
-        [mass]
+      [mass]
 
-            lb       :: pounds
-            kg       :: kilograms
+          lb       :: pounds
+          kg       :: kilograms
 
-        [energy]
+      [energy]
 
-            hartree  :: Hartree atomic units (au)
-            rydberg  :: Rydberg
-            eV       :: electron volts
-            J        :: Joules
-            C        :: Celcius (E=kT)
-            K        :: Kelving (E=kT)
-            invcm    :: Wavenumbers (cm^-1)
-            Hz       :: Hertz (frequency)
+          hartree  :: Hartree atomic units (au)
+          rydberg  :: Rydberg
+          eV       :: electron volts
+          J        :: Joules
+          C        :: Celcius (E=kT)
+          K        :: Kelving (E=kT)
+          invcm    :: Wavenumbers (cm^-1)
+          Hz       :: Hertz (frequency)
 
-        [distance]
+      [distance]
 
-            ym       :: yoctometers (1e-24 m)
-            zm       :: zeptometers (1e-21 m)
-            am       :: attometers  (1e-18 m)
-            fm       :: femtometers (1e-15 m)
-            pm       :: picometers  (1e-12 m)
-            nm       :: nanometers  (1e-9  m)
-            μm       :: micrometers (1e-6  m)
-            mm       :: millimeters (1e-3  m)
-            cm       :: centimeters (1e-2  m)
-            dm       :: decimeters  (1e-1  m)
-            m        :: meters
-            km       :: kilometers  (1e+3  m)
+          ym       :: yoctometers (1e-24 m)
+          zm       :: zeptometers (1e-21 m)
+          am       :: attometers  (1e-18 m)
+          fm       :: femtometers (1e-15 m)
+          pm       :: picometers  (1e-12 m)
+          nm       :: nanometers  (1e-9  m)
+          μm       :: micrometers (1e-6  m)
+          mm       :: millimeters (1e-3  m)
+          cm       :: centimeters (1e-2  m)
+          dm       :: decimeters  (1e-1  m)
+          m        :: meters
+          km       :: kilometers  (1e+3  m)
 
-            ft       :: feet
-            mi       :: miles
-            in       :: inches
+          ft       :: feet
+          mi       :: miles
+          in       :: inches
 
-        Note: Distance and energy can be related to each other through the relation
+      Note: Distance and energy can be related to each other through the relation
 
-            c = λ*ν,
+          c = λ*ν,
 
-        where λ is a wavelength (meters), ν is a frequency (Hz), and c is the speed of
-        light in a vacuum ($c m/s) which means the following is a valid implementation
-        of ${PROGRAM} :
+      where λ is a wavelength (meters), ν is a frequency (Hz), and c is the speed of
+      light in a vacuum ($c m/s) which means the following is a valid implementation
+      of ${PROGRAM} :
 
-            ${PROGRAM} 1 ev μm
+          ${PROGRAM} 1 ev μm
 
 help
 }
 
 die() {
-  # Raises an error message and exits.
-  # param: $1: $error_message: error message
+  ## Raises an error message and exits.
+  ## param: $1: $error_message: error message
 
   local exit_code=1
   local error_message="$1"
@@ -311,51 +310,88 @@ main() {
   [[ -z "${EXPONENT}" ]] && EXPONENT=1 || ( [[ "${EXPONENT}" -lt 1 ]] && die "Exponent (${EXPONENT}) must be greater or equal to 1" )
 
 	case "${FROM:l}" in
+
 		lb*|kg)
 			intype="mass"
 			;;
+
 		ev|hartree*|ryd*|j*|f|fahr*|c|cel*|k|kel*|invcm*|?hz|hz)
 			intype="energy"
 			;;
+
 		ym|zm|am|fm|pm|nm|μm|mm|cm|dm|m|km| ang*|bohr| ft|feet|foot|in|inch*|mi|mile*)
 			intype="length"
 			;;
+
 		*)
 			die "'${FROM}' is not a unit I can convert"
 			;;
+
 	esac
 
 	case "${TO:l}" in
+
 		lb*|kg)
 			outtype="mass"
 			;;
+
 		ev|hartree*|ryd*|j*|f|fahr*|c|cel*|k|kel*|invcm*|?hz|hz)
 			outtype="energy"
 			;;
+
 		ym|zm|am|fm|pm|nm|μm|mm|cm|dm|m|km| ang*|bohr| ft|feet|foot|in|inch*|mi|mile*)
 			outtype="length"
 			;;
+
 		*)
 			die "'${TO}' is not a unit I can convert"
 			;;
+
 	esac
 
+  # -- for converting between energy and (wave)length
   if [[ "${intype}" != "${outtype}" ]] ; then
+
     case "${intype}" in
+
       length)
+
         [[ "${outtype}" = "energy" ]] || die "Failed trying to convert ${intype} to ${outtype}."
-        val=$(( ($c / $("${intype}"_from "${NUM}" "${FROM:l}")) / $au2Hz ))
-        result=$("${outtype}"_to "${val}" "${TO:l}")
+
+        # -- convert to cm
+        val=$(( $("${intype}"_from "${NUM}" "${FROM:l}") * 100 ))
+
+        # -- convert to inverse centimeters (x cm = 1 / x invcm)
+        val=$(( 1.0 / $val ))
+
+        # -- convert to desired energy unit
+        result=$("${outtype}"_to "$(( ${val} / ${au2invcm} ))" "${TO:l}")
+
         ;;
+
       energy)
+
         [[ "${outtype}" = "length" ]] || die "Failed trying to convert ${intype} to ${outtype}."
-        val=$(( $c / ($("${intype}"_from "${NUM}" "${FROM:l}") * $au2Hz)  ))
-        result=$("${outtype}"_to "${val}" "${TO:l}")
+
+        # -- convert to inverse centimeters (wavenumbers)
+        val=$(( $("${intype}"_from "${NUM}" "${FROM:l}") * ${au2invcm} ))
+
+        # -- convert to cm ( x invcm = 1 / x cm )
+        val=$(( 1.0 / $val ))
+
+        # -- convert to desired energy unit
+        result=$("${outtype}"_to $(( "${val}" / 100.0 )) "${TO:l}")
+
         ;;
+
       *) die "Failed trying to convert ${intype} to ${outtype}." ;;
+
     esac
+
   else
+
     result=$("${outtype}_to" $("${intype}_from" "${NUM}" "${FROM:l}") "${TO:l}")
+
   fi
 
   echo "$(( ${result}**${EXPONENT} ))"
