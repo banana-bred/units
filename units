@@ -31,11 +31,11 @@ local au2Hz=$(( 1 / 1.5198298460570e-16  )) # -- atomic units --> Hertz (Hz)
 local C2K=273.15
 
 # -- distance
-local au2ang=0.529177210903 # -- atomic units --> Ångström
-local in2m=0.0254           # -- inches       --> meters
-local mi2m=1609.344         # -- miles        --> meters
-local ft2m=0.3048           # -- feet         --> meters
-local ly2m=9460730472580800 # -- light-year   --> meters
+local au2ang=0.529177210903   # -- atomic units --> Ångström
+local in2m=0.0254             # -- inches       --> meters
+local mi2m=1609.344           # -- miles        --> meters
+local ft2m=0.3048             # -- feet         --> meters
+local ly2m=9460730472580800.0 # -- light-year   --> meters
 
 # -- mass
 local lb_kg=0.4535924
