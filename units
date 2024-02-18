@@ -32,9 +32,10 @@ local C2K=273.15
 
 # -- distance
 local au2ang=0.529177210903 # -- atomic units --> Ångström
-local in2m=0.0254    # -- inches --> meters
-local mi2m=1609.344  # -- miles  --> meters
-local ft2m=0.3048    # -- feet   --> meters
+local in2m=0.0254           # -- inches       --> meters
+local mi2m=1609.344         # -- miles        --> meters
+local ft2m=0.3048           # -- feet         --> meters
+local ly2m=9460730472580800 # -- light-year   --> meters
 
 # -- mass
 local lb_kg=0.4535924
@@ -92,6 +93,8 @@ $PROGRAM
           ft       :: feet
           mi       :: miles
           in       :: inches
+
+          ly       :: lightyear
 
       Note: Distance and energy can be related to each other through the relation
 
@@ -153,6 +156,7 @@ length_from() {    # <-- length units
 		m)                                        ;;
 		km)       val=$(($val * 1e3))             ;;
 		bohr)     val=$(($val * $au2ang * 1e-10)) ;;
+    ly)       val=$(($val / $ly2m))           ;;
 	esac
 
   echo "${val}" # --> meters
@@ -181,6 +185,7 @@ length_to() {
 		m)                                   ;;
 		km)   val=$(($val * 1e-3))           ;;
 		bohr) val=$(($val / $au2ang * 1e10)) ;;
+    ly)   val=$(($val * $ly2m))           ;;
 	esac
 
 	echo "${val}"  # --> length units
@@ -319,7 +324,7 @@ main() {
 			intype="energy"
 			;;
 
-		ym|zm|am|fm|pm|nm|μm|mm|cm|dm|m|km| ang*|bohr| ft|feet|foot|in|inch*|mi|mile*)
+		ym|zm|am|fm|pm|nm|μm|mm|cm|dm|m|km| ang*|bohr| ft|feet|foot|in|inch*|mi|mile* |ly)
 			intype="length"
 			;;
 
@@ -339,7 +344,7 @@ main() {
 			outtype="energy"
 			;;
 
-		ym|zm|am|fm|pm|nm|μm|mm|cm|dm|m|km| ang*|bohr| ft|feet|foot|in|inch*|mi|mile*)
+		ym|zm|am|fm|pm|nm|μm|mm|cm|dm|m|km| ang*|bohr| ft|feet|foot|in|inch*|mi|mile* | ly)
 			outtype="length"
 			;;
 
