@@ -156,7 +156,7 @@ length_from() {    # <-- length units
 		m)                                        ;;
 		km)       val=$(($val * 1e3))             ;;
 		bohr)     val=$(($val * $au2ang * 1e-10)) ;;
-    ly)       val=$(($val / $ly2m))           ;;
+    ly)       val=$(($val * $ly2m))           ;;
 	esac
 
   echo "${val}" # --> meters
@@ -185,7 +185,7 @@ length_to() {
 		m)                                   ;;
 		km)   val=$(($val * 1e-3))           ;;
 		bohr) val=$(($val / $au2ang * 1e10)) ;;
-    ly)   val=$(($val * $ly2m))           ;;
+    ly)   val=$(($val / $ly2m))           ;;
 	esac
 
 	echo "${val}"  # --> length units
