@@ -39,38 +39,57 @@ The provided Makefile assumes a linux operating system.
 
             [mass]
 
-                lb       :: pounds
-                kg       :: kilograms
+                lb         :: pounds
+                kg         :: kilograms
 
             [energy]
 
-                hartree  :: Hartree atomic units (au)
-                rydberg  :: Rydberg
-                eV       :: electron volts
-                J        :: Joules
-                C        :: Celcius (E=kT)
-                K        :: Kelving (E=kT)
-                invcm    :: Wavenumbers (cm^-1)
-                Hz       :: Hertz (frequency)
+                hartree    :: Hartree atomic units (au)
+                rydberg    :: Rydberg
+                eV         :: electron volts
+                J          :: Joules
+                C          :: Celcius (E=kT)
+                K          :: Kelving (E=kT)
+                invcm      :: Wavenumbers (cm^-1)
+                Hz         :: Hertz (frequency)
 
             [distance]
 
-                ym       :: yoctometers (1e-24 m)
-                zm       :: zeptometers (1e-21 m)
-                am       :: attometers  (1e-18 m)
-                fm       :: femtometers (1e-15 m)
-                pm       :: picometers  (1e-12 m)
-                nm       :: nanometers  (1e-9  m)
-                μm       :: micrometers (1e-6  m)
-                mm       :: millimeters (1e-3  m)
-                cm       :: centimeters (1e-2  m)
-                dm       :: decimeters  (1e-1  m)
-                m        :: meters
-                km       :: kilometers  (1e+3  m)
+                ym         :: yoctometers (1e-24 m)
+                zm         :: zeptometers (1e-21 m)
+                am         :: attometers  (1e-18 m)
+                fm         :: femtometers (1e-15 m)
+                pm         :: picometers  (1e-12 m)
+                nm         :: nanometers  (1e-9  m)
+                μm         :: micrometers (1e-6  m)
+                mm         :: millimeters (1e-3  m)
+                cm         :: centimeters (1e-2  m)
+                dm         :: decimeters  (1e-1  m)
+                m          :: meters
+                km         :: kilometers  (1e+3  m)
 
-                ft       :: feet
-                mi       :: miles
-                in       :: inches
+                ft         :: feet
+                mi         :: miles
+                in         :: inches
+
+            [time]
+                s          :: seconds
+                ys         :: yoctoseconds (1e-24    s)
+                zs         :: zeptoseconds (1e-21    s)
+                as         :: attoseconds  (1e-18    s)
+                fs         :: femtoseconds (1e-15    s)
+                ps         :: picoseconds  (1e-12    s)
+                ns         :: nanoseconds  (1e-9     s)
+                μs         :: microseconds (1e-6     s)
+                ms         :: milliseconds (1e-3     s)
+                cs         :: centiseconds (1e-2     s)
+                ds         :: deciseconds  (1e-1     s)
+                ks         :: kiloseconds  (1e+3     s)
+                plancktime :: planck time  (5.39e-44 s)
+                min        :: minutes
+                h          :: hours
+                d          :: days
+                y          :: years
 
             Note: Distance and energy can be related to each other through the relation
 

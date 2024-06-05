@@ -37,6 +37,13 @@ local mi2m=1609.344           # -- miles        --> meters
 local ft2m=0.3048             # -- feet         --> meters
 local ly2m=9460730472580800.0 # -- light-year   --> meters
 
+# -- time
+local min2sec=60.0                     # -- minutes     --> seconds
+local hour2sec="$((60 * "$min2sec"))"     # -- hours       --> minutes
+local day2sec="$((24 * "$hour2sec"))"     # -- days        --> hours
+local year2sec="$((365.25 * "$day2sec"))" # -- years       --> days
+local planck2sec=5.39e-44              # -- planck time --> seconds
+
 # -- mass
 local lb_kg=0.4535924
 
@@ -61,40 +68,59 @@ $PROGRAM
 
       [mass]
 
-          lb       :: pounds
-          kg       :: kilograms
+          lb         :: pounds
+          kg         :: kilograms
 
       [energy]
 
-          hartree  :: Hartree atomic units (au)
-          rydberg  :: Rydberg
-          eV       :: electron volts
-          J        :: Joules
-          C        :: Celcius (E=kT)
-          K        :: Kelving (E=kT)
-          invcm    :: Wavenumbers (cm^-1)
-          Hz       :: Hertz (frequency)
+          hartree    :: Hartree atomic units (au)
+          rydberg    :: Rydberg
+          eV         :: electron volts
+          J          :: Joules
+          C          :: Celcius (E=kT)
+          K          :: Kelving (E=kT)
+          invcm      :: Wavenumbers (cm^-1)
+          Hz         :: Hertz (frequency)
 
       [distance]
 
-          ym       :: yoctometers (1e-24 m)
-          zm       :: zeptometers (1e-21 m)
-          am       :: attometers  (1e-18 m)
-          fm       :: femtometers (1e-15 m)
-          pm       :: picometers  (1e-12 m)
-          nm       :: nanometers  (1e-9  m)
-          μm       :: micrometers (1e-6  m)
-          mm       :: millimeters (1e-3  m)
-          cm       :: centimeters (1e-2  m)
-          dm       :: decimeters  (1e-1  m)
-          m        :: meters
-          km       :: kilometers  (1e+3  m)
+          m          :: meters
+          ym         :: yoctometers (1e-24 m)
+          zm         :: zeptometers (1e-21 m)
+          am         :: attometers  (1e-18 m)
+          fm         :: femtometers (1e-15 m)
+          pm         :: picometers  (1e-12 m)
+          nm         :: nanometers  (1e-9  m)
+          μm         :: micrometers (1e-6  m)
+          mm         :: millimeters (1e-3  m)
+          cm         :: centimeters (1e-2  m)
+          dm         :: decimeters  (1e-1  m)
+          km         :: kilometers  (1e+3  m)
 
-          ft       :: feet
-          mi       :: miles
-          in       :: inches
+          ft         :: feet
+          mi         :: miles
+          in         :: inches
 
-          ly       :: lightyear
+          ly         :: lightyear
+
+      [time]
+          s          :: seconds
+          ys         :: yoctoseconds (1e-24    s)
+          zs         :: zeptoseconds (1e-21    s)
+          as         :: attoseconds  (1e-18    s)
+          fs         :: femtoseconds (1e-15    s)
+          ps         :: picoseconds  (1e-12    s)
+          ns         :: nanoseconds  (1e-9     s)
+          μs         :: microseconds (1e-6     s)
+          ms         :: milliseconds (1e-3     s)
+          cs         :: centiseconds (1e-2     s)
+          ds         :: deciseconds  (1e-1     s)
+          ks         :: kiloseconds  (1e+3     s)
+          plancktime :: planck time  (5.39e-44 s)
+          min        :: minutes
+          h          :: hours
+          d          :: days
+          y          :: years
 
       Note: Distance and energy can be related to each other through the relation
 
@@ -185,10 +211,66 @@ length_to() {
 		m)                                   ;;
 		km)   val=$(($val * 1e-3))           ;;
 		bohr) val=$(($val / $au2ang * 1e10)) ;;
-    ly)   val=$(($val / $ly2m))           ;;
+    ly)   val=$(($val / $ly2m))          ;;
 	esac
 
 	echo "${val}"  # --> length units
+
+}
+
+time_from() {    # <-- time units
+	local val="$1"
+  local FROM="$2"
+
+	case $FROM in
+		ys)        val=$(($val * 1e-24))       ;;
+		zs)        val=$(($val * 1e-21))       ;;
+		as)        val=$(($val * 1e-18))       ;;
+		fs)        val=$(($val * 1e-15))       ;;
+		ps)        val=$(($val * 1e-12))       ;;
+		ns)        val=$(($val * 1e-9))        ;;
+		μs)        val=$(($val * 1e-6))        ;;
+		ms)        val=$(($val * 1e-3))        ;;
+		cs)        val=$(($val * 1e-2))        ;;
+		ds)        val=$(($val * 1e-1))        ;;
+		s)                                     ;;
+		ks)        val=$(($val * 1e3))         ;;
+    min)       val=$(($val * $min2sec))    ;;
+    h)         val=$(($val * $hour2sec))   ;;
+    d)         val=$(($val * $day2sec))    ;;
+    y)         val=$(($val * $year2sec))   ;;
+    plancktime) val=$(($val * $planck2sec)) ;;
+	esac
+
+  echo "${val}" # --> seconds
+
+}
+
+time_to() {
+  local val="$1" # <-- seconds
+  local TO="$2"
+
+	case $TO in
+		ys)        val=$(($val * 1e24))        ;;
+		zs)        val=$(($val * 1e21))        ;;
+		as)        val=$(($val * 1e18))        ;;
+		fs)        val=$(($val * 1e15))        ;;
+		ps)        val=$(($val * 1e12))        ;;
+		ns)        val=$(($val * 1e9))         ;;
+		μs)        val=$(($val * 1e6))         ;;
+		ms)        val=$(($val * 1e3))         ;;
+		cs)        val=$(($val * 1e2))         ;;
+		ds)        val=$(($val * 1e1))         ;;
+		s)                                     ;;
+		ks)        val=$(($val * 1e-3))        ;;
+    min)       val=$(($val / $min2sec))    ;;
+    h)         val=$(($val / $hour2sec))   ;;
+    d)         val=$(($val / $day2sec))    ;;
+    y)         val=$(($val / $year2sec))   ;;
+    plancktime) val=$(($val / $planck2sec)) ;;
+	esac
+
+	echo "${val}"  # --> time units
 
 }
 
@@ -320,13 +402,17 @@ main() {
 			intype="mass"
 			;;
 
-		ev|hartree*|ryd*|j*|f|fahr*|c|cel*|k|kel*|invcm*|?hz|hz)
+		ev| hartree*| ryd*| j*| f|fahr*| c|cel*| k|kel*| invcm*| ?hz|hz)
 			intype="energy"
 			;;
 
-		ym|zm|am|fm|pm|nm|μm|mm|cm|dm|m|km| ang*|bohr| ft|feet|foot|in|inch*|mi|mile* |ly)
+		?m|m| ang*|bohr| ft|feet|foot|in|inch*|mi|mile* |ly)
 			intype="length"
 			;;
+
+    ?s|s|sec*| min*| h|hour|hours| d|day|days| y|year|years| plancktime)
+      intype="time"
+      ;;
 
 		*)
 			die "'${FROM}' is not a unit I can convert"
@@ -344,9 +430,13 @@ main() {
 			outtype="energy"
 			;;
 
-		ym|zm|am|fm|pm|nm|μm|mm|cm|dm|m|km| ang*|bohr| ft|feet|foot|in|inch*|mi|mile* | ly)
+		?m|m| ang*|bohr| ft|feet|foot|in|inch*|mi|mile* |ly)
 			outtype="length"
 			;;
+
+    ?s|s|sec*| min*| h|hour|hours| d|day|days| y|year|years| plancktime)
+      outtype="time"
+      ;;
 
 		*)
 			die "'${TO}' is not a unit I can convert"
