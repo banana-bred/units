@@ -4,6 +4,8 @@
 #  Convert units
 # =================================================================================================================================
 
+setopt extendedglob
+
 local PROGRAM=$(basename "${(%):-%x}")
 
 # -- prefixes
@@ -223,23 +225,25 @@ time_from() {    # <-- time units
   local FROM="$2"
 
 	case $FROM in
-		ys)        val=$(($val * 1e-24))       ;;
-		zs)        val=$(($val * 1e-21))       ;;
-		as)        val=$(($val * 1e-18))       ;;
-		fs)        val=$(($val * 1e-15))       ;;
-		ps)        val=$(($val * 1e-12))       ;;
-		ns)        val=$(($val * 1e-9))        ;;
-		μs)        val=$(($val * 1e-6))        ;;
-		ms)        val=$(($val * 1e-3))        ;;
-		cs)        val=$(($val * 1e-2))        ;;
-		ds)        val=$(($val * 1e-1))        ;;
-		s)                                     ;;
-		ks)        val=$(($val * 1e3))         ;;
-    min)       val=$(($val * $min2sec))    ;;
-    h)         val=$(($val * $hour2sec))   ;;
-    d)         val=$(($val * $day2sec))    ;;
-    y)         val=$(($val * $year2sec))   ;;
-    plancktime) val=$(($val * $planck2sec)) ;;
+		ys)            val=$(($val * 1e-24))       ;;
+		zs)            val=$(($val * 1e-21))       ;;
+		as)            val=$(($val * 1e-18))       ;;
+		fs)            val=$(($val * 1e-15))       ;;
+		ps)            val=$(($val * 1e-12))       ;;
+		ns)            val=$(($val * 1e-9))        ;;
+		μs)            val=$(($val * 1e-6))        ;;
+		ms)            val=$(($val * 1e-3))        ;;
+		cs)            val=$(($val * 1e-2))        ;;
+		ds)            val=$(($val * 1e-1))        ;;
+    s(ec|)*)                                   ;;
+		ks)            val=$(($val * 1e3))         ;;
+    min*)          val=$(($val * $min2sec))    ;;
+    h|h(ou|)r(s|)) val=$(($val * $hour2sec))   ;;
+    d(ay|ays))     val=$(($val * $day2sec))    ;;
+    y(ea|)r(s|))   val=$(($val * $year2sec))   ;;
+    plancktime)    val=$(($val * $planck2sec)) ;;
+
+    ?s|s|sec*| min*| h|h(ou|)r(s|)| d(ay|ays)| y(ea|)r(s|)| plancktime)
 	esac
 
   echo "${val}" # --> seconds
@@ -251,23 +255,23 @@ time_to() {
   local TO="$2"
 
 	case $TO in
-		ys)        val=$(($val * 1e24))        ;;
-		zs)        val=$(($val * 1e21))        ;;
-		as)        val=$(($val * 1e18))        ;;
-		fs)        val=$(($val * 1e15))        ;;
-		ps)        val=$(($val * 1e12))        ;;
-		ns)        val=$(($val * 1e9))         ;;
-		μs)        val=$(($val * 1e6))         ;;
-		ms)        val=$(($val * 1e3))         ;;
-		cs)        val=$(($val * 1e2))         ;;
-		ds)        val=$(($val * 1e1))         ;;
-		s)                                     ;;
-		ks)        val=$(($val * 1e-3))        ;;
-    min)       val=$(($val / $min2sec))    ;;
-    h)         val=$(($val / $hour2sec))   ;;
-    d)         val=$(($val / $day2sec))    ;;
-    y)         val=$(($val / $year2sec))   ;;
-    plancktime) val=$(($val / $planck2sec)) ;;
+		ys)            val=$(($val * 1e24))        ;;
+		zs)            val=$(($val * 1e21))        ;;
+		as)            val=$(($val * 1e18))        ;;
+		fs)            val=$(($val * 1e15))        ;;
+		ps)            val=$(($val * 1e12))        ;;
+		ns)            val=$(($val * 1e9))         ;;
+		μs)            val=$(($val * 1e6))         ;;
+		ms)            val=$(($val * 1e3))         ;;
+		cs)            val=$(($val * 1e2))         ;;
+		ds)            val=$(($val * 1e1))         ;;
+		s(ec|)*)                                   ;;
+		ks)            val=$(($val * 1e-3))        ;;
+    min*)          val=$(($val / $min2sec))    ;;
+    h|h(ou|)r(s|)) val=$(($val / $hour2sec))   ;;
+    d(ay|ays))     val=$(($val / $day2sec))    ;;
+    y(ea|)r(s|))   val=$(($val / $year2sec))   ;;
+    plancktime)    val=$(($val / $planck2sec)) ;;
 	esac
 
 	echo "${val}"  # --> time units
@@ -410,7 +414,7 @@ main() {
 			intype="length"
 			;;
 
-    ?s|s|sec*| min*| h|hour|hours| d|day|days| y|year|years| plancktime)
+    ?s|s|sec*| min*| h|h(ou|)r(s|)| d(ay|ays)| y(ea|)r(s|)| plancktime)
       intype="time"
       ;;
 
@@ -434,7 +438,7 @@ main() {
 			outtype="length"
 			;;
 
-    ?s|s|sec*| min*| h|hour|hours| d|day|days| y|year|years| plancktime)
+    ?s|s|sec*| min*| h|h(ou|)r(s|)| d(ay|ays)| y(ea|)r(s|)| plancktime)
       outtype="time"
       ;;
 
