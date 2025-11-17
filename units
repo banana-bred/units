@@ -23,6 +23,9 @@ local kboltz=1.380649e-23  # -- Boltzmann constant (J/K)
 local hbar=1.054571817e-34 # -- hbar (J*s)
 local c=299792458          # -- speed of ligh in vacuum (m/s)
 
+# -- electric dipole
+local au2deb=2.5417462762781615
+
 # -- energy
 local au2eV=27.211386245988                 # -- atomic units --> electron volts (eV)
 local au2J=4.3597447222071e-18              # -- atomic units --> Joules (J)
@@ -72,6 +75,10 @@ $PROGRAM
 
           lb         :: pounds
           kg         :: kilograms
+
+      [dipole]
+          ea0, ea₀   :: atomic unit of electric dipole moment
+          deb, Debye :: CGS unit of the electric dipole moment
 
       [energy]
 
@@ -160,6 +167,26 @@ C2F() {
 	local C="$1"
 	local F=$(( ($C / 5 * 9) + 32 ))
 	echo "$F"
+}
+
+electric_dipole_from() {    # <-- dipole units
+	local val="$1"
+  local FROM="$2"
+	case $FROM in
+    deb|debye) val="$val" ;;
+		ea0|ea₀)   val="$(("$val" * au2deb))" ;;
+	esac
+  echo "${val}" # --> debye
+}
+
+electric_dipole_to() {    # <-- Debye
+  local val="$1" # <-- meters
+  local TO="$2"
+	case $TO in
+    deb|debye) val="$val" ;;
+		ea0|ea₀)   val=$(($val / au2deb)) ;;
+	esac
+  echo "${val}" # --> dipole units
 }
 
 length_from() {    # <-- length units
@@ -418,6 +445,10 @@ main() {
       intype="time"
       ;;
 
+    ea0|ea₀|deb|debye)
+      intype="electric_dipole"
+      ;;
+
 		*)
 			die "'${FROM}' is not a unit I can convert"
 			;;
@@ -442,6 +473,10 @@ main() {
       outtype="time"
       ;;
 
+    ea0|ea₀|deb|debye)
+      outtype="electric_dipole"
+      ;;
+
 		*)
 			die "'${TO}' is not a unit I can convert"
 			;;
@@ -454,33 +489,29 @@ main() {
     case "${intype}" in
 
       length)
-
         [[ "${outtype}" = "energy" ]] || die "Failed trying to convert ${intype} to ${outtype}."
-
         # -- convert to cm
         val=$(( $("${intype}"_from "${NUM}" "${FROM:l}") * 100 ))
-
         # -- convert to inverse centimeters (x cm = 1 / x invcm)
         val=$(( 1.0 / $val ))
-
         # -- convert to desired energy unit
         result=$("${outtype}"_to "$(( ${val} / ${au2invcm} ))" "${TO:l}")
-
         ;;
 
       energy)
-
         [[ "${outtype}" = "length" ]] || die "Failed trying to convert ${intype} to ${outtype}."
-
         # -- convert to inverse centimeters (wavenumbers)
         val=$(( $("${intype}"_from "${NUM}" "${FROM:l}") * ${au2invcm} ))
-
         # -- convert to cm ( x invcm = 1 / x cm )
         val=$(( 1.0 / $val ))
-
         # -- convert to desired energy unit
         result=$("${outtype}"_to $(( "${val}" / 100.0 )) "${TO:l}")
+        ;;
 
+      electric_dipole)
+        [[ "${outtype}" = "electric_dipole" ]] || die "Failed trying to convert ${intype} to ${outtype}."
+        val=$(( $("${intype}"_from "${NUM}" "${FROM:l}") ))
+        result=$("${outtype}"_to $(( "${val}" )) "${TO:l}")
         ;;
 
       *) die "Failed trying to convert ${intype} to ${outtype}." ;;
